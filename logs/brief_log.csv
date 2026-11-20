@@ -1,0 +1,18 @@
+date,as_of_et,ticker,available,error,is_index,market_bias,prior_date,prior_close,ema8,ema8_status,consolidation_days,atr14,pm_high,pm_low,pm_last,pm_volume,gap_pct,gap_source,rs_vs_spy,rank,news_count,heavy_news,earnings,is_candidate,is_focus,focus_rank,focus_source,focus_reason
+2026-11-20,17:19,AAPL,True,,False,Bearish,2026-11-19,349.21,351.1302,chop,4,7.7503,353.5,348.14,353.03,0,1.09,premarket,1.64,1,66,False,,False,False,,,
+2026-11-20,17:19,GOOGL,True,,False,Bearish,2026-11-19,272.66,284.005,below,0,10.7291,275.92,269.2,274.94,0,0.84,premarket,1.39,2,111,False,,False,False,,,
+2026-11-20,17:19,NFLX,True,,False,Bearish,2026-11-19,58.46,60.9147,below,0,1.9127,58.8893,58.31,58.4,0,-0.1,premarket,0.45,3,6,False,,False,False,,,
+2026-11-20,17:19,MSFT,True,,False,Bearish,2026-11-19,498.3,514.0913,below,0,15.9176,494.45,483.12,494.32,0,-0.8,premarket,-0.25,4,95,False,,False,False,,,
+2026-11-20,17:19,HOOD,True,,False,Bearish,2026-11-19,68.65,74.1792,below,0,5.0926,68.1,66.1,67.94,0,-1.03,premarket,-0.48,5,14,False,,False,False,,,
+2026-11-20,17:19,AVGO,True,,False,Bearish,2026-11-19,346.65,342.4095,above,0,18.0484,343.9997,332.68,343.0,0,-1.05,premarket,-0.5,6,49,False,,False,False,,,
+2026-11-20,17:19,TSLA,True,,False,Bearish,2026-11-19,374.41,381.5086,chop,4,16.1451,371.8,362.63,370.39,0,-1.07,premarket,-0.52,7,44,False,,False,False,,,
+2026-11-20,17:19,AMZN,True,,False,Bearish,2026-11-19,257.37,261.6967,chop,0,9.6081,257.37,250.05,253.67,0,-1.44,premarket,-0.89,8,88,False,,False,False,,,
+2026-11-20,17:19,NVDA,True,,False,Bearish,2026-11-19,145.98,160.5221,below,0,9.8771,144.6899,140.25,143.64,0,-1.6,premarket,-1.05,9,221,True,,True,True,2,agent,"Only heavy-news candidate (221 headlines), driven by a reported SEC accounting probe; gap -1.60, rejected below 8EMA."
+2026-11-20,17:19,COIN,True,,False,Bearish,2026-11-19,108.87,120.9487,below,0,9.0177,107.65,105.3012,107.05,0,-1.67,premarket,-1.12,10,23,False,,True,False,,,
+2026-11-20,17:19,META,True,,False,Bearish,2026-11-19,596.22,618.5775,below,0,22.1744,589.8439,568.68,583.22,0,-2.18,premarket,-1.63,11,63,False,,True,False,,,
+2026-11-20,17:19,INTC,True,,False,Bearish,2026-11-19,55.72,57.6358,below,0,5.2243,55.72,52.42,54.33,0,-2.49,premarket,-1.94,12,43,False,,True,False,,,
+2026-11-20,17:19,AMD,True,,False,Bearish,2026-11-19,489.19,513.1032,chop,0,43.4826,476.99,451.02,472.41,0,-3.43,premarket,-2.88,13,86,False,,False,False,,,
+2026-11-20,17:19,MU,True,,False,Bearish,2026-11-19,690.44,732.0857,below,0,58.5009,688.714,651.05,665.29,0,-3.64,premarket,-3.09,14,61,False,,True,True,1,agent,"Weakest name in the table (gap -3.64, RS -3.09), and headlines describe a memory-chip selloff led by Micron."
+2026-11-20,17:19,SPY,True,,True,Bearish,2026-11-19,715.87,737.0697,below,0,12.2143,714.96,692.15,711.93,0,-0.55,premarket,0.0,,47,False,,False,False,,,
+2026-11-20,17:19,QQQ,True,,True,Bearish,2026-11-19,645.04,664.527,below,0,17.23,645.523,631.06,639.05,0,-0.93,premarket,-0.38,,26,False,,False,False,,,
+2026-11-20,17:19,IWM,True,,True,Bearish,2026-11-19,264.22,272.2402,below,0,5.1338,264.82,262.72,263.73,0,-0.19,premarket,0.36,,15,False,,False,False,,,
