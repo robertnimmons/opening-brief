@@ -1,0 +1,25 @@
+name: Verify numbers
+
+# Manual check of prior close, 8 EMA, gap and premarket high/low against an
+# independent calculation on live data. Best run between 8:00 and 9:30 ET.
+on:
+  workflow_dispatch:
+    inputs:
+      tickers:
+        description: "Tickers to check"
+        type: string
+        default: "NVDA AAPL SPY"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -t .
+      - run: python -m opening_brief.verify ${{ inputs.tickers }}

@@ -1,0 +1,75 @@
+name: Opening Brief
+
+on:
+  schedule:
+    # Two slots per season so a delayed GitHub run still lands inside the
+    # 8:25-8:50 ET window. The script exits outside the window and skips a
+    # day it has already sent, so only one brief goes out.
+    # EDT (Mar-Nov): 12:27 and 12:37 UTC = 8:27 / 8:37 ET
+    - cron: "27 12 * * 1-5"
+    - cron: "37 12 * * 1-5"
+    # EST (Nov-Mar): 13:27 and 13:37 UTC = 8:27 / 8:37 ET
+    - cron: "27 13 * * 1-5"
+    - cron: "37 13 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print to the log instead of sending to Discord"
+        type: boolean
+        default: false
+      date:
+        description: "Replay a past day (YYYY-MM-DD). Leave blank for today."
+        type: string
+        default: ""
+
+permissions:
+  contents: write   # to commit logs/
+
+concurrency:
+  group: opening-brief
+  cancel-in-progress: false
+
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get latest logs (a run queued behind another sees its commit)
+        run: git pull --ff-only origin ${{ github.ref_name }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Build and send brief
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          ARGS=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            ARGS="--force"   # manual runs skip the time window
+            if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+            if [ -n "${{ inputs.date }}" ]; then ARGS="$ARGS --date ${{ inputs.date }}"; fi
+          fi
+          python -m opening_brief $ARGS
+
+      - name: Commit logs
+        if: always()
+        run: |
+          git config user.name "opening-brief-bot"
+          git config user.email "opening-brief-bot@users.noreply.github.com"
+          git add logs/
+          if git diff --cached --quiet; then
+            echo "No log changes."
+          else
+            git commit -m "Brief log $(TZ=America/New_York date +%F)"
+            git pull --rebase origin ${{ github.ref_name }}
+            git push origin HEAD:${{ github.ref_name }}
+          fi

@@ -1,0 +1,64 @@
+# Opening Brief configuration. Edit freely; no code changes needed.
+
+# Tickers to scan. SPY and QQQ are required (they set the market bias and the
+# relative-strength baseline). Order here does not matter; the table is
+# sorted by relative strength.
+watchlist = [
+  "NVDA", "TSLA", "AMZN", "META", "AAPL", "MSFT", "GOOGL", "AMD", "NFLX",
+  "AVGO", "MU", "COIN", "HOOD", "INTC", "SPY", "QQQ", "IWM",
+]
+
+# Tickers treated as indexes: shown in the header and table, never picked
+# for the focus list.
+index_tickers = ["SPY", "QQQ", "IWM"]
+
+[schedule]
+# The workflow fires at two UTC times so one lands near 8:30 ET in both EST
+# and EDT. The script exits unless Eastern time is inside this window.
+window_start = "08:25"
+window_end = "08:50"
+# Time used as the "as of" cutoff when replaying a past day with --date.
+replay_as_of = "08:30"
+# Extra full-day market closures not covered by the standard NYSE rules
+# (for example a national day of mourning). Format YYYY-MM-DD.
+extra_closures = ["2025-01-09"]
+
+[analysis]
+ema_length = 8
+# Daily closes used to decide holding above / rejected below / chop.
+status_lookback = 3
+# Consolidation on the 8 EMA: every close within this many ATRs of the EMA,
+# and the whole 2-4 day range within range_atr ATRs.
+consolidation_min_days = 2
+consolidation_max_days = 4
+consolidation_close_atr = 0.5
+consolidation_range_atr = 1.5
+atr_length = 14
+# Focus picks: at most this many, and only if |RS vs SPY| is at least
+# min_focus_rs (percentage points).
+max_focus = 2
+min_focus_rs = 0.3
+# How many trend-aligned names the agent may choose from.
+agent_candidates = 5
+# A ticker has heavy news if its 24h headline count is at least this many
+# AND at least heavy_news_multiple times the watchlist median.
+heavy_news_min = 8
+heavy_news_multiple = 2.5
+
+[news]
+lookback_hours = 24
+headlines_in_brief = 3
+
+[llm]
+# Set enabled = false to never call the Anthropic API.
+enabled = true
+model = "claude-sonnet-5-5"
+# true: tool-use agent investigates and picks the focus list.
+# false: one plain summary call instead.
+agent = true
+max_tool_calls = 10
+time_limit_seconds = 180
+max_tokens = 1500
+
+[delivery]
+discord_char_limit = 2000
