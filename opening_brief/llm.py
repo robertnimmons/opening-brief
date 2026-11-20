@@ -34,8 +34,10 @@ API_URL = "https://api.anthropic.com/v1/messages"
 
 class AnthropicClient:
     def __init__(self, api_key: str, model: str, max_tokens: int = 1500,
-                 session: requests.Session | None = None, backoff: float = 3.0):
+                 session: requests.Session | None = None, backoff: float = 3.0,
+                 workspace_id: str | None = None):
         self.key = api_key
+        self.workspace_id = workspace_id
         self.model = model
         self.max_tokens = max_tokens
         self.s = session or requests.Session()
@@ -49,8 +51,11 @@ class AnthropicClient:
             body["tools"] = tools
             if tool_choice:
                 body["tool_choice"] = tool_choice
-        headers = {"x-api-key": self.key, "anthropic-version": "2023-06-01",
+        headers = {"Authorization": f"Bearer {self.key}", "anthropic-version": "2023-06-01",
                    "content-type": "application/json"}
+        if self.workspace_id:
+            # Needed for personal/service account keys not scoped to one workspace
+            headers["anthropic-workspace-id"] = self.workspace_id
         for attempt in (1, 2):
             try:
                 r = self.s.post(API_URL, headers=headers, json=body, timeout=timeout)

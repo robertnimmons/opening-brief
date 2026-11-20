@@ -95,7 +95,7 @@ def run(argv=None, *, provider=None, finnhub_session=None, anthropic_client=None
     elif use_llm:
         client = anthropic_client or AnthropicClient(
             secrets.anthropic, cfg.llm.get("model", "claude-sonnet-5-5"),
-            cfg.llm.get("max_tokens", 1500))
+            cfg.llm.get("max_tokens", 1500), workspace_id=secrets.anthropic_workspace)
         suffix = "" if live else "-dryrun"
         runlog = RunLog(cfg.log_dir / "agent" / f"{brief_date.isoformat()}{suffix}.jsonl")
         if cfg.llm.get("agent", True):

@@ -357,3 +357,22 @@ class TestForcedRerun(Harness):
         self.run_brief("--force", now=datetime(2026, 11, 20, 9, 5, tzinfo=ET))
         self.assertEqual(len(self.sent), 2)
         self.assertEqual(len(read_csv(self.tmp / "logs" / "brief_log.csv")), 17)
+
+
+class TestAnthropicHeaders(unittest.TestCase):
+    def test_bearer_and_optional_workspace_header(self):
+        from opening_brief.llm import AnthropicClient
+        sent = {}
+
+        class S:
+            def post(self, url, headers=None, json=None, timeout=None):
+                sent.update(headers)
+                from tests.fakes import FakeResp
+                return FakeResp({"content": []})
+        AnthropicClient("sk-ant-usr-x", "m", session=S(), workspace_id="wrkspc_1").create(
+            system="s", messages=[])
+        self.assertEqual(sent["Authorization"], "Bearer sk-ant-usr-x")
+        self.assertEqual(sent["anthropic-workspace-id"], "wrkspc_1")
+        sent.clear()
+        AnthropicClient("k", "m", session=S()).create(system="s", messages=[])
+        self.assertNotIn("anthropic-workspace-id", sent)

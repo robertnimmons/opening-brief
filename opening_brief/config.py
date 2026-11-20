@@ -15,6 +15,7 @@ class Secrets:
     finnhub: str | None = None
     anthropic: str | None = None
     discord: str | None = None
+    anthropic_workspace: str | None = None
 
     @classmethod
     def from_env(cls) -> "Secrets":
@@ -26,6 +27,7 @@ class Secrets:
             finnhub=get("FINNHUB_API_KEY"),
             anthropic=get("ANTHROPIC_API_KEY"),
             discord=get("DISCORD_WEBHOOK_URL"),
+            anthropic_workspace=get("ANTHROPIC_WORKSPACE_ID"),
         )
 
 

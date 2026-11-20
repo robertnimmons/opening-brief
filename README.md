@@ -59,7 +59,7 @@ Or create an empty private repo on github.com, then `git remote add origin <url>
 
 - **Discord webhook**: in your server, open Server Settings > Integrations > Webhooks > New Webhook, pick the channel, then Copy Webhook URL.
 - **Finnhub**: sign up for the free key at finnhub.io.
-- **Anthropic**: create a key at console.anthropic.com. This one is optional.
+- **Anthropic**: optional. In the Claude Console go to Settings > API keys > Create key. Scope it to a workspace (for example the Default Workspace) so you don't need `ANTHROPIC_WORKSPACE_ID`. Personal keys (`sk-ant-usr...`) and service account keys both work.
 
 ### 3. Add them as GitHub Secrets
 
@@ -70,6 +70,7 @@ Go to the repo's Settings > Secrets and variables > Actions > New repository sec
 | `DISCORD_WEBHOOK_URL` | the webhook URL |
 | `FINNHUB_API_KEY` | your Finnhub key |
 | `ANTHROPIC_API_KEY` | your Anthropic key (optional) |
+| `ANTHROPIC_WORKSPACE_ID` | only if your key is not scoped to a workspace (`wrkspc_...`, from Console > Workspaces) |
 
 The keys are only read from environment variables and are never written to the repo.
 
