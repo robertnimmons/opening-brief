@@ -102,14 +102,14 @@ Replay notes: Yahoo only serves 1-minute bars for about the last 30 days. For ol
 ## Changing things
 
 - **Watchlist**: edit `watchlist` in `config.toml`. SPY and QQQ are always kept because the bias and RS depend on them. Index-type tickers in `index_tickers` show in the table but are never picked.
-- **Run time**: change the cron lines in `.github/workflows/brief.yml` (they're in UTC, two per season) and `window_start` / `window_end` in `config.toml` to match. For example, for 8:45 ET use `42 12` and `52 12` (EDT) plus `42 13` and `52 13` (EST), with a window of 08:40 to 09:05.
+- **Run time**: set `target_time`, `window_start` and `window_end` in `config.toml`, then shift the cron lines in `.github/workflows/brief.yml` (UTC) so the first one lands about 25 minutes before the target in both EDT (UTC-4) and EST (UTC-5).
 - **Thresholds**: everything in the `[analysis]` section, including EMA length, coil tolerances, minimum RS for a focus pick and heavy-news thresholds.
 - **Model**: `model` under `[llm]`.
 - **One-off closures**: add dates to `extra_closures`. Standard NYSE holidays (including Good Friday and observed weekend rules) are computed automatically.
 
 ## Scheduling details
 
-GitHub's cron often runs 5 to 20 minutes late. The workflow fires twice per season (8:27 and 8:37 ET) so one of them lands inside the 8:25 to 8:50 window. Runs are serialized, and the second run sees the first run's log commit and exits, so you get one brief per day. The script also exits on weekends and NYSE holidays. Half days (like the day after Thanksgiving) still open at 9:30, so the brief runs.
+GitHub often starts scheduled runs 15 to 60 minutes late on weekday mornings, and occasionally skips one. So the workflow fires four times per season, at about 8:05, 8:20, 8:45 and 9:05 ET. A run that starts before 8:25 waits until 8:30 (`target_time`). A run that starts between 8:25 and 9:20 sends right away. Anything later exits. Runs are serialized, and once one has sent, the others see that day's log commit and exit, so you get one brief per day. The waiting run uses about 25 Actions minutes a day, roughly 550 of the 2,000 free minutes a month for a private repo. The script also exits on weekends and NYSE holidays. Half days (like the day after Thanksgiving) still open at 9:30, so the brief runs.
 
 ## Logs
 

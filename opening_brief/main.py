@@ -3,7 +3,8 @@ from __future__ import annotations
 
 import argparse
 import sys
-from datetime import date, datetime, time
+import time as _time
+from datetime import date, datetime, time, timedelta
 
 from . import analysis as an
 from .config import Secrets, load_config
@@ -33,7 +34,7 @@ def parse_args(argv=None):
 
 def run(argv=None, *, provider=None, finnhub_session=None, anthropic_client=None,
         now: datetime | None = None, poster=post_to_discord, secrets: Secrets | None = None,
-        out=print) -> int:
+        out=print, sleep=_time.sleep) -> int:
     args = parse_args(argv)
     setup_logging(args.verbose)
     cfg = load_config(args.config)
@@ -60,11 +61,6 @@ def run(argv=None, *, provider=None, finnhub_session=None, anthropic_client=None
         out(f"Market closed on {brief_date} ({reason}). Nothing to send.")
         return EXIT_OK
 
-    if not replay and not args.force and not in_window(
-            as_of, sched.get("window_start", "08:25"), sched.get("window_end", "08:50")):
-        out(f"Outside the run window ({as_of:%H:%M} ET). Exiting without sending.")
-        return EXIT_OK
-
     if not args.dry_run and not secrets.discord:
         out("DISCORD_WEBHOOK_URL is not set. Add it as a GitHub secret, or use --dry-run to print.")
         return EXIT_CONFIG
@@ -74,6 +70,24 @@ def run(argv=None, *, provider=None, finnhub_session=None, anthropic_client=None
     if live and not args.force and already_logged(log_csv, brief_date):
         out(f"Brief for {brief_date} was already sent. Exiting.")
         return EXIT_OK
+
+    if not replay and not args.force:
+        start, end = sched.get("window_start", "08:25"), sched.get("window_end", "09:20")
+        target = datetime.combine(brief_date, time(*map(int, sched.get("target_time", "08:30").split(":"))),
+                                  tzinfo=ET)
+        max_wait = float(sched.get("max_early_wait_minutes", 30)) * 60
+        if in_window(as_of, start, end):
+            pass
+        elif as_of < target and (target - as_of).total_seconds() <= max_wait:
+            # GitHub started us early (scheduled runs fire early slots on time
+            # but later ones are often delayed), so wait for the target time.
+            wait = (target - as_of).total_seconds()
+            out(f"Started at {as_of:%H:%M} ET; waiting {wait / 60:.0f} min until {target:%H:%M} ET.")
+            sleep(wait)
+            as_of = now_et() if now is None else as_of + timedelta(seconds=wait)
+        else:
+            out(f"Outside the run window ({as_of:%H:%M} ET). Exiting without sending.")
+            return EXIT_OK
 
     # ---------------------------------------------------------- data + analysis
     log.info("Building brief for %s as of %s ET", brief_date, as_of.strftime("%H:%M"))

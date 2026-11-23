@@ -2,15 +2,20 @@ name: Opening Brief
 
 on:
   schedule:
-    # Two slots per season so a delayed GitHub run still lands inside the
-    # 8:25-8:50 ET window. The script exits outside the window and skips a
-    # day it has already sent, so only one brief goes out.
-    # EDT (Mar-Nov): 12:27 and 12:37 UTC = 8:27 / 8:37 ET
-    - cron: "27 12 * * 1-5"
-    - cron: "37 12 * * 1-5"
-    # EST (Nov-Mar): 13:27 and 13:37 UTC = 8:27 / 8:37 ET
-    - cron: "27 13 * * 1-5"
-    - cron: "37 13 * * 1-5"
+    # GitHub delays scheduled runs, often by 15-60 minutes on weekday
+    # mornings, so there are several slots. An early run waits until 8:30 ET,
+    # a run between 8:25 and 9:20 ET sends right away, and once one run has
+    # sent, the others see the log and exit. Slots in the other season land
+    # outside the window and exit within seconds.
+    # EDT (Mar-Nov): 8:05, 8:20, 8:45, 9:05 ET
+    - cron: "5 12 * * 1-5"
+    - cron: "20 12 * * 1-5"
+    - cron: "45 12 * * 1-5"
+    - cron: "5 13 * * 1-5"
+    # EST (Nov-Mar): 8:05 (shares 13:05 UTC above), 8:20, 8:45, 9:05 ET
+    - cron: "20 13 * * 1-5"
+    - cron: "45 13 * * 1-5"
+    - cron: "5 14 * * 1-5"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -32,7 +37,7 @@ concurrency:
 jobs:
   brief:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 

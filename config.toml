@@ -13,10 +13,15 @@ watchlist = [
 index_tickers = ["SPY", "QQQ", "IWM"]
 
 [schedule]
-# The workflow fires at two UTC times so one lands near 8:30 ET in both EST
-# and EDT. The script exits unless Eastern time is inside this window.
+# GitHub often starts scheduled runs 15-60 minutes late, so the workflow
+# fires several times from about 8:05 ET. A run that starts before the
+# window waits until target_time (if that is at most max_early_wait_minutes
+# away). A run inside the window sends right away. Anything else exits. Only
+# the first successful run of the day sends; the rest see the log and exit.
+target_time = "08:30"
 window_start = "08:25"
-window_end = "08:50"
+window_end = "09:20"
+max_early_wait_minutes = 30
 # Time used as the "as of" cutoff when replaying a past day with --date.
 replay_as_of = "08:30"
 # Extra full-day market closures not covered by the standard NYSE rules

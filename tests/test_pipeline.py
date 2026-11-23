@@ -186,6 +186,23 @@ class TestSchedule(Harness):
         code, _ = self.run_brief("--force", now=datetime(2026, 11, 20, 9, 30, tzinfo=ET))
         self.assertEqual(len(self.sent), 1)
 
+    def test_early_run_waits_until_target(self):
+        waits = []
+        code = m.run(["--config", self.cfg], provider=FakeProvider(daily_overrides=bullish_overrides()),
+                     finnhub_session=FakeFinnhubSession(NOW), now=datetime(2026, 11, 20, 8, 7, tzinfo=ET),
+                     secrets=Secrets("x", None, "https://d"), poster=lambda u, ms: self.sent.append(ms),
+                     out=self.lines.append, sleep=waits.append)
+        self.assertEqual(code, 0)
+        self.assertEqual(waits, [23 * 60])
+        self.assertEqual(len(self.sent), 1)
+        self.assertIn("as of 8:30 ET", "\n".join(self.sent[0]))
+
+    def test_too_early_and_late_delayed_runs(self):
+        self.run_brief(now=datetime(2026, 11, 20, 7, 45, tzinfo=ET))   # 45 min early: exit
+        self.assertEqual(self.sent, [])
+        self.run_brief(now=datetime(2026, 11, 20, 9, 12, tzinfo=ET))   # delayed 9:12: still sends
+        self.assertEqual(len(self.sent), 1)
+
     def test_second_run_same_day_is_skipped(self):
         self.run_brief()
         self.run_brief(now=datetime(2026, 11, 20, 8, 41, tzinfo=ET))
