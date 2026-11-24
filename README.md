@@ -111,6 +111,24 @@ Replay notes: Yahoo only serves 1-minute bars for about the last 30 days. For ol
 
 GitHub often starts scheduled runs 15 to 60 minutes late on weekday mornings, and occasionally skips one. So the workflow fires four times per season, at about 8:05, 8:20, 8:45 and 9:05 ET. A run that starts before 8:25 waits until 8:30 (`target_time`). A run that starts between 8:25 and 9:20 sends right away. Anything later exits. Runs are serialized, and once one has sent, the others see that day's log commit and exit, so you get one brief per day. The waiting run uses about 25 Actions minutes a day, roughly 550 of the 2,000 free minutes a month for a private repo. The script also exits on weekends and NYSE holidays. Half days (like the day after Thanksgiving) still open at 9:30, so the brief runs.
 
+## Reliable scheduling with an external trigger
+
+GitHub's own `schedule` trigger is best effort. On this repo it has not fired at all, which several people have reported for new repos. The workflow keeps its cron lines as a backup, but the dependable path is an outside scheduler that calls GitHub's API at 8:28 ET. That's the same mechanism as clicking Run workflow, with `scheduled: true` so the time window and the once-per-day check still apply.
+
+1. **Create a token.** On GitHub, go to Settings > Developer settings > Personal access tokens > Fine-grained tokens > Generate new token.
+   - Repository access: Only select repositories > `opening-brief`.
+   - Permissions: Actions: Read and write. Leave everything else at no access.
+   - Pick an expiration and note the date, since the trigger stops when the token expires.
+2. **Create the job.** Make a free account at cron-job.org, then Create cronjob:
+   - URL: `https://api.github.com/repos/robertnimmons/opening-brief/actions/workflows/brief.yml/dispatches`
+   - Schedule: custom, weekdays (Mon-Fri) at 08:28, time zone America/New_York.
+   - Advanced > Request method: POST.
+   - Headers: `Authorization: Bearer <your token>`, `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2022-11-28`, `Content-Type: application/json`.
+   - Request body: `{"ref":"main","inputs":{"scheduled":"true"}}`
+3. **Test it** with the job's Test run button. GitHub answers `204 No Content`, and a new run appears under Actions. Outside 8:25 to 9:20 ET that run exits with "Outside the run window", which is fine and proves the trigger works.
+
+Optional: add a second job at 08:45 as a backup. If the first one already sent, the second sees the log and exits.
+
 ## Logs
 
 - `logs/brief_log.csv`: one row per ticker per day with every computed value, the candidate list, the focus picks and where they came from (agent, summary or rules). Use this later to check whether focus picks moved more than the rest.

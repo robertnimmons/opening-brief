@@ -18,6 +18,10 @@ on:
     - cron: "5 14 * * 1-5"
   workflow_dispatch:
     inputs:
+      scheduled:
+        description: "Act like a scheduled run (time window, once per day). The external scheduler sets this."
+        type: boolean
+        default: false
       dry_run:
         description: "Print to the log instead of sending to Discord"
         type: boolean
@@ -59,7 +63,7 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           ARGS=""
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.scheduled }}" != "true" ]; then
             ARGS="--force"   # manual runs skip the time window
             if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
             if [ -n "${{ inputs.date }}" ]; then ARGS="$ARGS --date ${{ inputs.date }}"; fi
