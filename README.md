@@ -1,6 +1,6 @@
 # Opening Brief
 
-A premarket briefing for the first hour of the open. Every weekday at about 8:30 AM Eastern, a GitHub Action checks the watchlist's daily 8 EMA trend, premarket gaps, levels and news, then posts a short brief to Discord with the 1 or 2 names worth watching.
+A premarket briefing for the first hour of the open. Every weekday at about 8:30 AM Eastern, a GitHub Action (started by an external scheduler, see below) checks the watchlist's daily 8 EMA trend, premarket gaps, levels and news, then posts a short brief to Discord with the 1 or 2 names worth watching.
 
 It never places trades and gives no buy or sell signals. All numbers come from code. Claude only writes the short reasons, and a validator removes any number it writes that isn't in the table.
 
@@ -92,7 +92,7 @@ export FINNHUB_API_KEY=...  ANTHROPIC_API_KEY=...        # optional for a dry ru
 python -m opening_brief --dry-run --force                # print today's brief now
 python -m opening_brief --dry-run --date 2026-11-17      # replay a past day as of 8:30 ET
 python -m opening_brief.verify NVDA AAPL SPY             # independent number check
-python -m unittest discover -s tests -t .                # 40 tests, about 4 seconds
+python -m unittest discover -s tests -t .                # 43 tests, about 5 seconds
 ```
 
 `--force` skips the time window and the already-sent check. `--no-llm` skips Claude.
@@ -109,11 +109,18 @@ Replay notes: Yahoo only serves 1-minute bars for about the last 30 days. For ol
 
 ## Scheduling details
 
-GitHub often starts scheduled runs 15 to 60 minutes late on weekday mornings, and occasionally skips one. So the workflow fires four times per season, at about 8:05, 8:20, 8:45 and 9:05 ET. A run that starts before 8:25 waits until 8:30 (`target_time`). A run that starts between 8:25 and 9:20 sends right away. Anything later exits. Runs are serialized, and once one has sent, the others see that day's log commit and exit, so you get one brief per day. The waiting run uses about 25 Actions minutes a day, roughly 550 of the 2,000 free minutes a month for a private repo. The script also exits on weekends and NYSE holidays. Half days (like the day after Thanksgiving) still open at 9:30, so the brief runs.
+The brief should go out once per weekday between 8:25 and 9:20 ET (`window_start` and `window_end` in `config.toml`). Two things start the workflow:
+
+1. **The external scheduler (main path).** cron-job.org calls GitHub's API at 8:28 ET with `scheduled: true`. The run starts within a minute and sends right away. Setup is in the next section.
+2. **GitHub's own cron lines (backup only).** The workflow still has slots at about 8:05, 8:20, 8:45 and 9:05 ET, but GitHub's `schedule` trigger is best effort and can't be relied on here. On Nov 24, 2026, the first day it fired at all, every slot started 9 to 10 hours late (5:15 to 6:30 PM ET) and exited with "Outside the run window". If a slot ever does land on time, a run that starts before 8:25 waits until 8:30 (`target_time`), and a run inside the window sends right away.
+
+Whichever run sends first commits that day's log. Runs are serialized, and every later run that day sees the log and exits, so you get one brief per day. The script also exits on weekends and NYSE holidays. Half days (like the day after Thanksgiving) still open at 9:30, so the brief runs.
+
+Manual runs from the Actions tab (Run workflow with `scheduled` unchecked) skip the time window and the already-sent check.
 
 ## Reliable scheduling with an external trigger
 
-GitHub's own `schedule` trigger is best effort. On this repo it has not fired at all, which several people have reported for new repos. The workflow keeps its cron lines as a backup, but the dependable path is an outside scheduler that calls GitHub's API at 8:28 ET. That's the same mechanism as clicking Run workflow, with `scheduled: true` so the time window and the once-per-day check still apply.
+GitHub's own `schedule` trigger is best effort (see above). The dependable path is an outside scheduler that calls GitHub's API at 8:28 ET. That's the same mechanism as clicking Run workflow, with `scheduled: true` so the time window and the once-per-day check still apply.
 
 1. **Create a token.** On GitHub, go to Settings > Developer settings > Personal access tokens > Fine-grained tokens > Generate new token.
    - Repository access: Only select repositories > `opening-brief`.
@@ -125,7 +132,8 @@ GitHub's own `schedule` trigger is best effort. On this repo it has not fired at
    - Advanced > Request method: POST.
    - Headers: `Authorization: Bearer <your token>`, `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2022-11-28`, `Content-Type: application/json`.
    - Request body: `{"ref":"main","inputs":{"scheduled":"true"}}`
-3. **Test it** with the job's Test run button. GitHub answers `204 No Content`, and a new run appears under Actions. Outside 8:25 to 9:20 ET that run exits with "Outside the run window", which is fine and proves the trigger works.
+3. **Test it** with the job's Test run button. GitHub answers `204 No Content`, and a new run appears under Actions with the event `workflow_dispatch`. Outside 8:25 to 9:20 ET that run exits with "Outside the run window", which is fine and proves the trigger works. A `401` means the token is wrong or expired, `404` means the token can't see the repo or the URL has a typo, and `422` usually means the body is malformed.
+4. **Check the next weekday morning.** Look for a `workflow_dispatch` run that started around 8:28 ET and a brief in Discord. cron-job.org's job history also shows each call and GitHub's response.
 
 Optional: add a second job at 08:45 as a backup. If the first one already sent, the second sees the log and exits.
 

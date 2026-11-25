@@ -13,11 +13,12 @@ watchlist = [
 index_tickers = ["SPY", "QQQ", "IWM"]
 
 [schedule]
-# GitHub often starts scheduled runs 15-60 minutes late, so the workflow
-# fires several times from about 8:05 ET. A run that starts before the
-# window waits until target_time (if that is at most max_early_wait_minutes
-# away). A run inside the window sends right away. Anything else exits. Only
-# the first successful run of the day sends; the rest see the log and exit.
+# The main trigger is an external scheduler at 8:28 ET (see README). GitHub's
+# own cron slots are a backup and can start hours late. A run that starts
+# before the window waits until target_time (if that is at most
+# max_early_wait_minutes away). A run inside the window sends right away.
+# Anything else exits. Only the first successful run of the day sends; the
+# rest see the log and exit.
 target_time = "08:30"
 window_start = "08:25"
 window_end = "09:20"
