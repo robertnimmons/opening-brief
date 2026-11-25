@@ -34,3 +34,20 @@ date,as_of_et,ticker,available,error,is_index,market_bias,prior_date,prior_close
 2026-11-23,13:57,QQQ,True,,True,Bearish,2026-11-20,608.45,652.0654,below,0,18.7714,656.92,626.44,656.19,0,7.85,premarket,3.47,,24,False,,False,False,,,
 2026-11-23,13:57,IWM,True,,True,Bearish,2026-11-20,256.61,268.7668,below,0,5.4478,265.78,261.41,264.83,0,3.2,premarket,-1.18,,14,False,,False,False,,,
 
+2026-11-25,08:28,AAPL,True,,False,Bearish,2026-11-24,354.07,350.277,chop,2,8.3285,353.18,350.4,351.18,0,-0.82,premarket,1.04,1,47,False,,False,False,,,
+2026-11-25,08:28,NFLX,True,,False,Bearish,2026-11-24,58.87,59.4113,below,0,1.9815,58.77,58.0,58.22,0,-1.1,premarket,0.76,2,15,False,,False,False,,,
+2026-11-25,08:28,COIN,True,,False,Bearish,2026-11-24,102.35,112.1611,below,0,8.9139,101.53,99.68,100.52,0,-1.79,premarket,0.07,3,11,False,,False,False,,,
+2026-11-25,08:28,META,True,,False,Bearish,2026-11-24,589.82,600.7995,below,2,23.9738,583.9682,575.0,578.1,0,-1.99,premarket,-0.13,4,50,False,,False,False,,,
+2026-11-25,08:28,TSLA,True,,False,Bearish,2026-11-24,384.68,378.0987,chop,2,19.0057,383.719,372.36,374.38,0,-2.68,premarket,-0.82,5,52,False,,False,False,,,
+2026-11-25,08:28,HOOD,True,,False,Bearish,2026-11-24,65.65,69.4925,below,0,5.3073,64.47,62.85,63.6,0,-3.12,premarket,-1.26,6,5,False,,False,False,,,
+2026-11-25,08:28,MSFT,True,,False,Bearish,2026-11-24,496.13,502.3928,below,0,16.7369,494.89,477.9,480.1644,0,-3.22,premarket,-1.36,7,76,False,,False,False,,,
+2026-11-25,08:28,AMZN,True,,False,Bearish,2026-11-24,252.29,256.5164,below,2,9.9936,251.66,243.0596,243.8023,0,-3.36,premarket,-1.5,8,70,False,,True,False,,,
+2026-11-25,08:28,AVGO,True,,False,Bearish,2026-11-24,301.08,323.1288,below,0,19.7157,299.06,287.53,288.62,0,-4.14,premarket,-2.28,9,36,False,,True,True,2,agent,"Gap -4.14 and RS -2.28, rejected below 8EMA. It trades with the semis rout, and h20 notes Broadcom's exposure to Anthropic's IPO."
+2026-11-25,08:28,GOOGL,True,,False,Bearish,2026-11-24,279.05,280.0588,chop,2,11.5063,279.747,266.9,267.29,0,-4.21,premarket,-2.35,10,66,False,,True,False,,,
+2026-11-25,08:28,INTC,True,,False,Bearish,2026-11-24,54.8,56.5011,chop,2,5.5144,53.95,51.99,52.46,0,-4.27,premarket,-2.41,11,45,False,,True,False,,,
+2026-11-25,08:28,NVDA,True,,False,Bearish,2026-11-24,155.38,155.458,chop,0,13.3194,155.768,146.2,147.3175,0,-5.19,premarket,-3.33,12,196,True,,False,False,,,
+2026-11-25,08:28,AMD,True,,False,Bearish,2026-11-24,413.27,468.6836,below,0,46.7951,403.31,385.04,391.64,0,-5.23,premarket,-3.37,13,84,False,,True,True,1,agent,"Gap -5.23 and RS -3.37, rejected below 8EMA. Headline h225 cites a 337 Million-Share Resale Filing on top of the chip sell-off."
+2026-11-25,08:28,MU,True,,False,Bearish,2026-11-24,629.79,686.6441,chop,0,67.7925,609.8,583.36,592.12,0,-5.98,premarket,-4.12,14,82,False,,False,False,,,
+2026-11-25,08:28,SPY,True,,True,Bearish,2026-11-24,718.78,724.0976,below,2,14.9787,714.24,703.84,705.41,0,-1.86,premarket,0.0,,58,False,,False,False,,,
+2026-11-25,08:28,QQQ,True,,True,Bearish,2026-11-24,638.1,648.783,below,0,20.8608,631.0,618.43,620.52,0,-2.76,premarket,-0.9,,26,False,,False,False,,,
+2026-11-25,08:28,IWM,True,,True,Bearish,2026-11-24,267.14,267.8821,below,2,5.6355,266.34,263.29,263.94,0,-1.2,premarket,0.66,,13,False,,False,False,,,
