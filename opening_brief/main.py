@@ -25,7 +25,7 @@ def parse_args(argv=None):
     p.add_argument("--dry-run", action="store_true", help="print the message instead of sending it")
     p.add_argument("--date", help="replay a past day (YYYY-MM-DD) as of the configured replay time")
     p.add_argument("--force", action="store_true",
-                   help="skip the 8:25-8:50 ET window and the already-sent check")
+                   help="skip the 8:25-9:20 ET window and the already-sent check")
     p.add_argument("--no-llm", action="store_true", help="skip the Claude step")
     p.add_argument("--config", help="path to config.toml")
     p.add_argument("-v", "--verbose", action="store_true")

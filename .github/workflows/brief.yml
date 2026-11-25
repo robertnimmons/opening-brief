@@ -2,8 +2,10 @@ name: Opening Brief
 
 on:
   schedule:
-    # GitHub delays scheduled runs, often by 15-60 minutes on weekday
-    # mornings, so there are several slots. An early run waits until 8:30 ET,
+    # Backup only. The main trigger is an external scheduler calling
+    # workflow_dispatch with scheduled=true at 8:28 ET (see README). GitHub's
+    # schedule is best effort and has started these hours late, so there
+    # are several slots. An early run waits until 8:30 ET,
     # a run between 8:25 and 9:20 ET sends right away, and once one run has
     # sent, the others see the log and exit. Slots in the other season land
     # outside the window and exit within seconds.
